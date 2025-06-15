@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de bord - BudgetWise</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="dashboard.html">BudgetWise</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="dashboard.html">Tableau de bord</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="transactions.html">Transactions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="budget.html">Budget</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="statistics.html">Statistiques</a>
+                    </li>
+                </ul>
+                <div class="navbar-nav">
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <span id="userName"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="logout()">Déconnexion</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Welcome Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h1 class="display-6 fw-bold">Tableau de bord</h1>
+                <p class="text-muted">Vue d'ensemble de votre situation financière</p>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card bg-primary text-white h-100">
+                    <div class="card-body">
+                        <h6 class="card-title">Solde Actuel</h6>
+                        <h3 class="mb-0" id="currentBalance">€0.00</h3>
+                        <small class="opacity-75">Revenus - Dépenses</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-success text-white h-100">
+                    <div class="card-body">
+                        <h6 class="card-title">Revenus ce mois</h6>
+                        <h3 class="mb-0" id="monthlyRevenue">€0.00</h3>
+                        <small class="opacity-75">Total des entrées</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-danger text-white h-100">
+                    <div class="card-body">
+                        <h6 class="card-title">Dépenses ce mois</h6>
+                        <h3 class="mb-0" id="monthlyExpenses">€0.00</h3>
+                        <small class="opacity-75">Total des sorties</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-info text-white h-100">
+                    <div class="card-body">
+                        <h6 class="card-title">Budget Restant</h6>
+                        <h3 class="mb-0" id="budgetRemaining">€0.00</h3>
+                        <small class="opacity-75">Disponible ce mois</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts and Recent Transactions -->
+        <div class="row">
+            <div class="col-lg-8 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Répartition des Dépenses</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="expenseChart" width="400" height="200"></canvas>
+                        </div>
+                        <div id="noDataMessage" class="text-center text-muted py-5" style="display: none;">
+                            <p>Aucune donnée à afficher</p>
+                            <a href="transactions.html" class="btn btn-primary">Ajouter une transaction</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Transactions Récentes</h5>
+                        <a href="transactions.html" class="btn btn-sm btn-primary">Voir tout</a>
+                    </div>
+                    <div class="card-body p-0">
+                        <div id="recentTransactions" class="list-group list-group-flush">
+                            <!-- Transactions will be loaded here -->
+                        </div>
+                        <div id="noTransactionsMessage" class="text-center text-muted py-4" style="display: none;">
+                            <p>Aucune transaction récente</p>
+                            <a href="transactions.html" class="btn btn-sm btn-primary">Ajouter une transaction</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Actions Rapides</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-2">
+                                <a href="transactions.html?type=revenue" class="btn btn-success w-100">
+                                    Ajouter Revenu
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="transactions.html?type=expense" class="btn btn-danger w-100">
+                                    Ajouter Dépense
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="budget.html" class="btn btn-primary w-100">
+                                    Gérer Budget
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="statistics.html" class="btn btn-info w-100">
+                                    Voir Statistiques
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget - BudgetWise</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="dashboard.html">BudgetWise</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">Tableau de bord</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="transactions.html">Transactions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="budget.html">Budget</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="statistics.html">Statistiques</a>
+                    </li>
+                </ul>
+                <div class="navbar-nav">
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <span id="userName"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="logout()">Déconnexion</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h1 class="display-6 fw-bold">Gestion du Budget</h1>
+                <p class="text-muted">Définissez et suivez vos budgets mensuels</p>
+            </div>
+        </div>
+
+        <!-- Current Budget Overview -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Budget Actuel - <span id="currentMonth"></span></h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <div class="text-center">
+                                    <h4 class="text-primary" id="budgetAmount">€0.00</h4>
+                                    <small class="text-muted">Budget défini</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="text-center">
+                                    <h4 class="text-danger" id="spentAmount">€0.00</h4>
+                                    <small class="text-muted">Dépensé</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="text-center">
+                                    <h4 class="text-success" id="remainingAmount">€0.00</h4>
+                                    <small class="text-muted">Restant</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="text-center">
+                                    <h4 id="percentageUsed">0%</h4>
+                                    <small class="text-muted">Utilisé</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="progress mb-3" style="height: 20px;">
+                            <div class="progress-bar" id="budgetProgressBar" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <div class="text-center">
+                            <button class="btn btn-primary" onclick="showSetBudgetForm()">Modifier le budget</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Set Budget Form -->
+        <div class="row mb-4" id="setBudgetSection" style="display: none;">
+            <div class="col-lg-6 mx-auto">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Définir le Budget Mensuel</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="setBudgetForm">
+                            <div class="mb-3">
+                                <label for="budgetMonth" class="form-label">Mois</label>
+                                <input type="month" class="form-control" id="budgetMonth" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="budgetAmountInput" class="form-label">Montant (€)</label>
+                                <input type="number" step="0.01" class="form-control" id="budgetAmountInput" required>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <span class="spinner-border spinner-border-sm d-none" id="budgetSpinner"></span>
+                                    Définir le Budget
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" onclick="hideBudgetForm()">Annuler</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Budget History -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Historique des Budgets</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Mois</th>
+                                        <th>Budget</th>
+                                        <th>Dépensé</th>
+                                        <th>Restant</th>
+                                        <th>% Utilisé</th>
+                                        <th>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="budgetHistoryTable">
+                                    <!-- Budget history will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="noBudgetHistory" class="text-center text-muted py-5" style="display: none;">
+                            <p>Aucun historique de budget</p>
+                            <p class="small">Commencez par définir votre premier budget mensuel</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Budget Tips -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Conseils pour un budget efficace</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                            <span>1</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6>Règle 50/30/20</h6>
+                                        <p class="text-muted small">50% besoins, 30% envies, 20% épargne</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                            <span>2</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6>Suivi régulier</h6>
+                                        <p class="text-muted small">Vérifiez votre budget chaque semaine</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <div class="bg-info text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                            <span>3</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6>Fonds d'urgence</h6>
+                                        <p class="text-muted small">Gardez 3-6 mois de dépenses de côté</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/budget.js"></script>
+</body>
+</html>

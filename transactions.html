@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions - BudgetWise</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="dashboard.html">BudgetWise</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">Tableau de bord</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="transactions.html">Transactions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="budget.html">Budget</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="statistics.html">Statistiques</a>
+                    </li>
+                </ul>
+                <div class="navbar-nav">
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <span id="userName"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="logout()">Déconnexion</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h1 class="display-6 fw-bold">Transactions</h1>
+                <p class="text-muted">Gérez vos revenus et dépenses</p>
+            </div>
+        </div>
+
+        <!-- Add Transaction Forms -->
+        <div class="row mb-4">
+            <!-- Add Revenue Form -->
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="card-title mb-0">Ajouter un Revenu</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="addRevenueForm">
+                            <div class="mb-3">
+                                <label for="revenueAmount" class="form-label">Montant (€)</label>
+                                <input type="number" step="0.01" class="form-control" id="revenueAmount" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="revenueSource" class="form-label">Source</label>
+                                <input type="text" class="form-control" id="revenueSource" placeholder="Ex: Salaire, Freelance..." required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="revenueDate" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="revenueDate" required>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">
+                                <span class="spinner-border spinner-border-sm d-none" id="revenueSpinner"></span>
+                                Ajouter le Revenu
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Expense Form -->
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="card-title mb-0">Ajouter une Dépense</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="addExpenseForm">
+                            <div class="mb-3">
+                                <label for="expenseAmount" class="form-label">Montant (€)</label>
+                                <input type="number" step="0.01" class="form-control" id="expenseAmount" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="expenseDescription" class="form-label">Description</label>
+                                <input type="text" class="form-control" id="expenseDescription" placeholder="Ex: Courses, Essence..." required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="expenseCategory" class="form-label">Catégorie</label>
+                                <select class="form-select" id="expenseCategory" required>
+                                    <option value="">Sélectionner une catégorie</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="expenseType" class="form-label">Type</label>
+                                <select class="form-select" id="expenseType" required>
+                                    <option value="">Sélectionner un type</option>
+                                    <option value="fixe">Fixe</option>
+                                    <option value="variable">Variable</option>
+                                    <option value="occasionnel">Occasionnel</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="expenseDate" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="expenseDate" required>
+                            </div>
+                            <button type="submit" class="btn btn-danger w-100">
+                                <span class="spinner-border spinner-border-sm d-none" id="expenseSpinner"></span>
+                                Ajouter la Dépense
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Filtres</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <label for="filterType" class="form-label">Type</label>
+                                <select class="form-select" id="filterType">
+                                    <option value="">Tous</option>
+                                    <option value="revenue">Revenus</option>
+                                    <option value="expense">Dépenses</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="filterCategory" class="form-label">Catégorie</label>
+                                <select class="form-select" id="filterCategory">
+                                    <option value="">Toutes</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="filterStartDate" class="form-label">Date début</label>
+                                <input type="date" class="form-select" id="filterStartDate">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="filterEndDate" class="form-label">Date fin</label>
+                                <input type="date" class="form-select" id="filterEndDate">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <button class="btn btn-primary" onclick="applyFilters()">Appliquer les filtres</button>
+                                <button class="btn btn-outline-secondary" onclick="clearFilters()">Effacer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions List -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Liste des Transactions</h5>
+                        <span class="badge bg-primary" id="transactionCount">0 transactions</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Description</th>
+                                        <th>Catégorie</th>
+                                        <th>Type</th>
+                                        <th>Montant</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transactionsTable">
+                                    <!-- Transactions will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="noTransactionsMessage" class="text-center text-muted py-5" style="display: none;">
+                            <p>Aucune transaction trouvée</p>
+                            <p class="small">Ajoutez votre première transaction en utilisant les formulaires ci-dessus</p>
+                        </div>
+                        <div id="loadingTransactions" class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Chargement...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/transactions.js"></script>
+</body>
+</html>

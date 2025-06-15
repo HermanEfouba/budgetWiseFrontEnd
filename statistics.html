@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistiques - BudgetWise</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="dashboard.html">BudgetWise</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">Tableau de bord</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="transactions.html">Transactions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="budget.html">Budget</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="statistics.html">Statistiques</a>
+                    </li>
+                </ul>
+                <div class="navbar-nav">
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <span id="userName"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="logout()">Déconnexion</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h1 class="display-6 fw-bold">Statistiques</h1>
+                <p class="text-muted">Analysez vos habitudes financières</p>
+            </div>
+        </div>
+
+        <!-- Period Filter -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row align-items-end">
+                            <div class="col-md-3 mb-3">
+                                <label for="periodType" class="form-label">Période</label>
+                                <select class="form-select" id="periodType" onchange="updatePeriodInputs()">
+                                    <option value="month">Ce mois</option>
+                                    <option value="year">Cette année</option>
+                                    <option value="custom">Période personnalisée</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3" id="startDateGroup" style="display: none;">
+                                <label for="startDate" class="form-label">Date début</label>
+                                <input type="date" class="form-control" id="startDate">
+                            </div>
+                            <div class="col-md-3 mb-3" id="endDateGroup" style="display: none;">
+                                <label for="endDate" class="form-label">Date fin</label>
+                                <input type="date" class="form-control" id="endDate">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <button class="btn btn-primary w-100" onclick="loadStatistics()">Actualiser</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body text-center">
+                        <h3 id="totalRevenue">€0.00</h3>
+                        <p class="mb-0">Total Revenus</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-danger text-white">
+                    <div class="card-body text-center">
+                        <h3 id="totalExpenses">€0.00</h3>
+                        <p class="mb-0">Total Dépenses</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body text-center">
+                        <h3 id="netBalance">€0.00</h3>
+                        <p class="mb-0">Solde Net</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body text-center">
+                        <h3 id="avgDaily">€0.00</h3>
+                        <p class="mb-0">Moyenne/Jour</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row 1 -->
+        <div class="row mb-4">
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Répartition des Dépenses par Catégorie</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="categoryChart" width="400" height="300"></canvas>
+                        <div id="noCategoryData" class="text-center text-muted py-4" style="display: none;">
+                            <p>Aucune donnée de catégorie disponible</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Évolution Mensuelle</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="monthlyChart" width="400" height="300"></canvas>
+                        <div id="noMonthlyData" class="text-center text-muted py-4" style="display: none;">
+                            <p>Aucune donnée mensuelle disponible</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row 2 -->
+        <div class="row mb-4">
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Dépenses par Type</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="typeChart" width="400" height="300"></canvas>
+                        <div id="noTypeData" class="text-center text-muted py-4" style="display: none;">
+                            <p>Aucune donnée de type disponible</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Revenus vs Dépenses</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="comparisonChart" width="400" height="300"></canvas>
+                        <div id="noComparisonData" class="text-center text-muted py-4" style="display: none;">
+                            <p>Aucune donnée de comparaison disponible</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Categories Table -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Top Catégories de Dépenses</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Rang</th>
+                                        <th>Catégorie</th>
+                                        <th>Montant</th>
+                                        <th>Pourcentage</th>
+                                        <th>Nombre de transactions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="topCategoriesTable">
+                                    <!-- Top categories will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="noTopCategories" class="text-center text-muted py-4" style="display: none;">
+                            <p>Aucune donnée de catégorie disponible</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Section -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Export des Données</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">Exportez vos statistiques pour une analyse plus approfondie</p>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-primary" onclick="exportToPDF()">
+                                Exporter en PDF
+                            </button>
+                            <button class="btn btn-outline-success" onclick="exportToCSV()">
+                                Exporter en CSV
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/statistics.js"></script>
+</body>
+</html>
