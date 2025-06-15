@@ -1,7 +1,7 @@
 // Utility functions for BudgetWise application
 
 // API Configuration
-const API_BASE_URL = "https://budgetwise-m0r3.onrender.com/" || 'http://localhost:8000';
+const API_BASE_URL = "https://budgetwise-m0r3.onrender.com" || 'http://localhost:8000';
 
 // Format currency
 function formatCurrency(amount) {

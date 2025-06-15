@@ -3,7 +3,7 @@ let currentUser = null;
 let expenseChart = null;
 
 // API Base URL
-const API_BASE_URL = "https://budgetwise-m0r3.onrender.com/" || 'http://localhost:8000';
+const API_BASE_URL = "https://budgetwise-m0r3.onrender.com" || 'http://localhost:8000';
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
